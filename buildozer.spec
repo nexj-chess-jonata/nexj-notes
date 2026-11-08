@@ -9,7 +9,7 @@ source.include_exts = py,png,jpg,kv,atlas,json
 android.presplash_color = #0A0C1C
 source.exclude_dirs = tests,bin,.github,.buildozer
 version = 1.0.0
-requirements = python3,kivy==2.3.0,cryptography,pyjnius,android
+requirements = python3==3.11.5,hostpython3==3.11.5,kivy==2.3.0,cryptography,pyjnius,android
 orientation = portrait
 fullscreen = 0
 
@@ -21,6 +21,8 @@ android.accept_sdk_license = True
 android.add_src = java
 android.allow_backup = False
 android.logcat_filters = *:S python:D
+
+p4a.branch = v2024.01.21
 
 [buildozer]
 log_level = 2
