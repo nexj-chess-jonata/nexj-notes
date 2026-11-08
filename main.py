@@ -19,6 +19,47 @@ from kivy.uix.widget import Widget
 import bridge
 from vault import TRASH_DAYS, Vault, WeakPassword, WrongPassword
 
+# --- caixa de erro: em vez de fechar, mostra o erro na tela (e guarda em crash.txt) ---
+import traceback
+from kivy.base import ExceptionHandler, ExceptionManager
+
+
+class _ErroNaTela(ExceptionHandler):
+    def handle_exception(self, inst):
+        try:
+            texto = "".join(traceback.format_exception(type(inst), inst, inst.__traceback__))
+        except Exception:
+            texto = repr(inst)
+        try:
+            app = App.get_running_app()
+            if app:
+                with open(os.path.join(app.user_data_dir, "crash.txt"), "a", encoding="utf-8") as f:
+                    f.write(texto + "\n----\n")
+        except Exception:
+            pass
+
+        def _mostrar(dt):
+            try:
+                box = BoxLayout(orientation="vertical", padding=dp(8), spacing=dp(8))
+                sv = ScrollView()
+                lab = Label(text=texto[-1800:], font_size=dp(11), halign="left", valign="top",
+                            size_hint_y=None, text_size=(Window.width - dp(40), None))
+                lab.bind(texture_size=lambda w, s: setattr(w, "height", s[1]))
+                sv.add_widget(lab)
+                box.add_widget(sv)
+                b = Button(text="Fechar", size_hint_y=None, height=dp(44))
+                box.add_widget(b)
+                pop = Popup(title="Erro (tire um print e mande)", content=box, size_hint=(0.96, 0.9))
+                b.bind(on_release=pop.dismiss)
+                pop.open()
+            except Exception:
+                pass
+        Clock.schedule_once(_mostrar, 0)
+        return ExceptionManager.PASS
+
+
+ExceptionManager.add_handler(_ErroNaTela())
+
 BG = (0.07, 0.08, 0.11, 1)
 CARD = (0.14, 0.16, 0.21, 1)
 ACCENT = (0.2, 0.55, 0.95, 1)
