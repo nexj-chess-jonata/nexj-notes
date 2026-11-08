@@ -1,0 +1,8 @@
+.buildozer/
+bin/
+__pycache__/
+*.pyc
+vault.bin
+vault.bin.tmp
+prefs.json
+bio.bin
